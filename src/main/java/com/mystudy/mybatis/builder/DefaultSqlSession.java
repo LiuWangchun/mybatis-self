@@ -1,16 +1,23 @@
 package com.mystudy.mybatis.builder;
 
 import com.mystudy.mybatis.config.Configuration;
+import com.mystudy.mybatis.config.Mapper;
+import com.mystudy.mybatis.executor.Executor;
+import com.mystudy.mybatis.proxy.MapperProxyFactory;
 import com.mystudy.mybatis.util.DataSourceUtil;
 
+import java.io.InputStream;
 import java.lang.reflect.Proxy;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * <p>Title: DefaultSqlSession</p>
  * <p>Description: SqlSession 的具体实现</p>
  */
 public class DefaultSqlSession implements SqlSession {
+
     //核心配置对象
     private Configuration cfg;
 
@@ -23,10 +30,13 @@ public class DefaultSqlSession implements SqlSession {
 
     //调用DataSourceUtil工具类获取连接
     public Connection getConn() {
-        //TODO
-        return DataSourceUtil.getConnection(cfg);
+        try {
+            conn = DataSourceUtil.getConnection(cfg);
+            return conn;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
-
 
     /**
      * 动态代理：
@@ -37,15 +47,28 @@ public class DefaultSqlSession implements SqlSession {
      * Class[]：代理对象和被代理对象要求有相同的行为。（具有相同的方法）
      * InvocationHandler：如何代理。需要我们自己提供的增强部分的代码
      */
-
+    @Override
     public <T> T getMapper(Class<T> daoClass) {
         conn = getConn();
         System.out.println(conn);
-        T daoProxy = Proxy.newProxyInstance(daoClass.getClassLoader(),)
+        T daoProxy = (T) Proxy.newProxyInstance(daoClass.getClassLoader(), new Class[] {daoClass}, new MapperProxyFactory(cfg.getMappers(),conn));
         return null;
     }
 
+    //释放对象
+    @Override
     public void close() {
+        try {
+            System.out.println(conn);
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    //查询所有方法
+    public <E> List<E> selectList(String statement) {
+        Mapper mapper = cfg.getMappers().get(statement);
+        return new Executor().selectList(mapper,conn);
     }
 }

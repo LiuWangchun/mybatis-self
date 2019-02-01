@@ -88,7 +88,7 @@ public class XMLConfigBuilder {
                     Map<String, Mapper> mappers = loadMapperConfiguration(mapperPath);
                     //给configuration中的mappers赋值
                     cfg.setMappers(mappers);
-                } else {
+                } /*else {
                     System.out.println("使用的是注解");
                     //表示没有resource属性，用的是注解
                     //获取class属性的值
@@ -97,7 +97,7 @@ public class XMLConfigBuilder {
                     Map<String, Mapper> mappers = loadMapperAnnotation(daoClassPath);
                     //给configuration中的mappers赋值
                     cfg.setMappers(mappers);
-                }
+                }*/
             }
 
             //把配置对象传递给DefaultSqlSession
@@ -129,7 +129,7 @@ public class XMLConfigBuilder {
             //定义返回对象
             Map<String, Mapper> mappers = new HashMap<String, Mapper>();
             //1.根据路径获取字节输入流
-            in = Resources.getResourceAsStream(mapperPath)
+            in = Resources.getResourceAsStream(mapperPath);
             //2.根据字节输入流获取Document对象
             SAXReader reader = new SAXReader();
             Document document = reader.read(in);
@@ -177,7 +177,7 @@ public class XMLConfigBuilder {
      * @param daoClassPath
      * @return
      */
-    private static Map<String,Mapper> loadMapperAnnotation(String daoClassPath) {
+   /* private static Map<String,Mapper> loadMapperAnnotation(String daoClassPath) {
         //定义返回值对象
         Map<String,Mapper> mappers = new HashMap<String, Mapper>();
 
@@ -227,8 +227,6 @@ public class XMLConfigBuilder {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return null;
-    }
+    }*/
 }
