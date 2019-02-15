@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<mapper namespace="com.mystudy.mybatis.dao.IUserDao">
+<mapper namespace="com.mystudy.dao.IUserDao">
     <!-- 配置查询所有操作 -->
-    <select id="findAll" resultType="com.mystudy.mybatis.domain.User">
+    <select id="findAll" resultType="com.mystudy.domain.User">
         select * from user
     </select>
 </mapper>
